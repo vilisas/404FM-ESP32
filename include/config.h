@@ -1,6 +1,11 @@
 #ifndef _CONFIG_H__
 
 
+#define RDS_ID 0x420
+#define RDS_STATION "404 FM"
+#define RDS_BUFFER_DEFAULT "Radio not found!"
+
+
 #define FMSTATION 9170      // 9170 == 91.70 MHz  8800 - 10800 = 88 - 108 MHz 
 #define TXPOWER 115         // 88 - 115 dbuV
 
