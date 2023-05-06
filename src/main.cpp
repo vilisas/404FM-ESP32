@@ -7,9 +7,7 @@
 #include <Adafruit_Si4713.h>
 
 #ifdef USE_WIFI
-# include <WiFi.h>
-WiFiServer webServer(80);
-IPAddress ip;
+#include "wifi_utils.h"
 #endif
 
 // #define _BV(n) (1 << n)
@@ -94,25 +92,7 @@ void setup()
 
   delay(100);
 #ifdef USE_WIFI
-  esp_task_wdt_reset();
-# ifdef USE_WIFI_AP
-  Serial.print("Starting AP with SSID: " WIFI_SSID);
-  WiFi.softAP(WIFI_SSID, WIFI_KEY);
-  ip = WiFi.softAPIP();
-# else
-  Serial.print("Connecting to: " WIFI_SSID " ");
-  WiFi.begin(WIFI_SSID, WIFI_KEY);
-  while (WiFi.status() != WL_CONNECTED) {
-    esp_task_wdt_reset();
-    delay(500);
-    Serial.print(".");
-  }
-  ip = WiFi.localIP();
-# endif
-  Serial.println("DONE");
-
-  Serial.println("Local IP: " + WiFi.localIP());
-  webServer.begin();
+  setup_wifi();
 #endif
 }
 
@@ -143,6 +123,8 @@ void loop()
   Serial.print(radio.currASQ, HEX);
   Serial.print("\tInLevel:");
   Serial.println(radio.currInLevel);
+
+  web_client_loop();
 
   // toggle GPO1 and GPO2
   // radio.setGPIO(_BV(1));
