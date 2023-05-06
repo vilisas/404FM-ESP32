@@ -6,7 +6,14 @@
 #include <SPI.h>
 #include <Adafruit_Si4713.h>
 
-#define _BV(n) (1 << n)
+#ifdef USE_WIFI
+# include <WiFi.h>
+WiFiServer webServer(80);
+IPAddress ip;
+#endif
+
+// #define _BV(n) (1 << n)
+
 #define RESETPIN PIN_SI4712_RESET
 
 // TwoWire I2C_0 = TwoWire(0);
@@ -85,8 +92,28 @@ void setup()
   radio.setGPIOctrl(_BV(1) | _BV(2));  // set GP1 and GP2 to output
   radio.setGPIO(0); // drive GPIO pins LOW
 
-
   delay(100);
+#ifdef USE_WIFI
+  esp_task_wdt_reset();
+# ifdef USE_WIFI_AP
+  Serial.print("Starting AP with SSID: " WIFI_SSID);
+  WiFi.softAP(WIFI_SSID, WIFI_KEY);
+  ip = WiFi.softAPIP();
+# else
+  Serial.print("Connecting to: " WIFI_SSID " ");
+  WiFi.begin(WIFI_SSID, WIFI_KEY);
+  while (WiFi.status() != WL_CONNECTED) {
+    esp_task_wdt_reset();
+    delay(500);
+    Serial.print(".");
+  }
+  ip = WiFi.localIP();
+# endif
+  Serial.println("DONE");
+
+  Serial.println("Local IP: " + WiFi.localIP());
+  webServer.begin();
+#endif
 }
 
 void loop()

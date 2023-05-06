@@ -17,6 +17,7 @@
 // #define TXPOWER 115         // 88 - 115 dbuV
 
 // #define USE_WIFI 1
+// #define USE_WIFI_AP 1
 // #define WIFI_SSID "404"
 // #define WIFI_KEY "Send Nudes"
 
