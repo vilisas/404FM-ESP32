@@ -97,7 +97,7 @@ void loop()
   switch (counter % 16)
   {
   case 1:
-    radio.setRDSbuffer("Radio not found!");
+    radio.setRDSbuffer(RDS_BUFFER_DEFAULT);
     break;
   case 10:
     radio.setRDSbuffer(" All your base  ");
