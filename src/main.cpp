@@ -124,7 +124,9 @@ void loop()
   Serial.print("\tInLevel:");
   Serial.println(radio.currInLevel);
 
+#ifdef USE_WIFI
   web_client_loop();
+#endif
 
   // toggle GPO1 and GPO2
   // radio.setGPIO(_BV(1));

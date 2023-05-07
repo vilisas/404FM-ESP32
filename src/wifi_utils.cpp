@@ -2,11 +2,16 @@
 #include "config.h"
 #include <esp_task_wdt.h>
 #include "WiFi.h"
+#include <Adafruit_Si4713.h>
+
+
+extern Adafruit_Si4713 radio;
 
 IPAddress ip;
 WiFiServer webServer(80);
 
 String header;
+
 
 
 void setup_wifi(){
@@ -44,6 +49,14 @@ void web_client_loop(){
     if (client){
             Serial.println("New Client.");          // print a message out in the serial port
     String currentLine = "";                // make a String to hold incoming data from the client
+
+    String freq_str       = String(radio.currFreq / 100.0);
+    String currdbuv_str   = String(radio.currdBuV);
+    String currAntCap_str = String(radio.currAntCap);
+    // Input audio level
+    String currASQ_str    = String(radio.currASQ);
+    String currInLevel_str= String(radio.currInLevel);
+
     while (client.connected()) {            // loop while the client's connected
       esp_task_wdt_reset();
       if (millis() - start_time > 5000) {
@@ -88,6 +101,7 @@ void web_client_loop(){
             // Display the HTML web page
             client.println("<!DOCTYPE html><html>");
             client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+            client.println("<meta http-equiv=\"refresh\" content=\"5\">");
             client.println("<link rel=\"icon\" href=\"data:,\">");
             // CSS to style the on/off buttons
             // Feel free to change the background-color and font-size attributes to fit your preferences
@@ -116,6 +130,19 @@ void web_client_loop(){
             } else {
               client.println("<p><a href=\"/27/off\"><button class=\"button button2\">OFF</button></a></p>");
             }
+
+            client.println("Freq : " + freq_str + " MHz<br>");
+            client.println("Power: " + currdbuv_str + " dBuV<br>");
+            client.println("Antenna capacity: " + currAntCap_str + "<br>");
+            client.println("Audio level: " + currInLevel_str + " dB <br>");
+            client.println("ASQ: " + currASQ_str + "<br>");
+            int uptime = (millis() / 1000);
+            client.print("Uptime: ");
+            client.print(uptime);
+            client.println(" s<br>");
+
+
+
             client.println("</body></html>");
 
             // The HTTP response ends with another blank line
