@@ -20,6 +20,10 @@ int counter = 1;
 
 RTC_DATA_ATTR int reboot_counter = 0;
 
+String station_rds_name = RDS_STATION;
+String station_rds_buffer = RDS_BUFFER_DEFAULT;
+uint16_t station_rds_id = RDS_ID;
+
 void print_tune_status()
 {
   // This will tell you the status in case you want to read it from the chip
@@ -81,9 +85,9 @@ void setup()
   print_tune_status();
 
   // begin the RDS/RDBS transmission
-  radio.beginRDS(RDS_ID);
-  radio.setRDSstation(RDS_STATION);
-  radio.setRDSbuffer(RDS_BUFFER_DEFAULT);
+  radio.beginRDS(station_rds_id);
+  radio.setRDSstation(station_rds_name.c_str());
+  radio.setRDSbuffer(station_rds_buffer.c_str());
 
   Serial.println("RDS on!");
 
@@ -99,25 +103,7 @@ void setup()
 void loop()
 {
   esp_task_wdt_reset();
-  counter++;
 
-  switch (counter % 16)
-  {
-  case 1:
-    radio.setRDSbuffer(RDS_BUFFER_DEFAULT);
-    break;
-  case 10:
-    radio.setRDSbuffer(" All your base  ");
-    break;
-  case 13:
-    radio.setRDSbuffer("   belong us    ");
-    break;
-
-  default:
-    break;
-  }
-
-  // put your main code here, to run repeatedly:
   radio.readASQ();
   Serial.print("\tASQ: 0x");
   Serial.print(radio.currASQ, HEX);

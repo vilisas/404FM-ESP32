@@ -35,4 +35,8 @@
 # define WDT_TIMEOUT 4
 #endif
 
+#define PARAM_NAME "rdsName"
+#define PARAM_TEXT "rdsText"
+#define PARAM_ID "rdsID"
+
 #endif
